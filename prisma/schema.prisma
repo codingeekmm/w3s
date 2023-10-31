@@ -1,0 +1,114 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Define the Customers model
+model Customer {
+  id           Int     @id @default(autoincrement())
+  customerName String
+  contactName  String
+  address      String?
+  city         String?
+  postalCode   String?
+  country      String?
+  // Add other fields as needed
+  order        Order[]
+}
+
+// Define the Categories model
+model Category {
+  id           Int       @id @default(autoincrement())
+  categoryName String
+  description  String?
+  // Add other fields as needed
+  product      Product[]
+}
+
+// Define the Employees model
+model Employee {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  birthDate DateTime
+  photo     String?
+  notes     String
+  // Add other fields as needed
+  order     Order[]
+}
+
+// Define the OrderDetails model
+model OrderDetail {
+  id        Int @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  //price Float
+  // Add other fields as needed
+
+  // Define relationships
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+// Define the Orders model
+model Order {
+  id         Int      @id @default(autoincrement())
+  customerId Int
+  employeeId Int
+  orderDate  DateTime
+  shipperId  Int
+  // Add other fields as needed
+
+  // Define relationships
+  customer    Customer      @relation(fields: [customerId], references: [id])
+  employee    Employee      @relation(fields: [employeeId], references: [id])
+  shipper     Shipper       @relation(fields: [shipperId], references: [id])
+  orderDetail OrderDetail[]
+}
+
+// Define the Products model
+model Product {
+  id          Int    @id @default(autoincrement())
+  productName String
+  supplierId  Int
+  categoryId  Int
+  unit        String
+  price       Float
+  // Add other fields as needed
+
+  // Define relationships
+  category    Category      @relation(fields: [categoryId], references: [id])
+  supplier    Supplier      @relation(fields: [supplierId], references: [id])
+  orderDetail OrderDetail[]
+}
+
+// Define the Shippers model
+model Shipper {
+  id          Int     @id @default(autoincrement())
+  shipperName String
+  phone       String?
+  // Add other fields as needed
+  order       Order[]
+}
+
+// Define the Suppliers model
+model Supplier {
+  id           Int       @id @default(autoincrement())
+  supplierName String
+  contactName  String
+  address      String?
+  city         String?
+  postalCode   String?
+  country      String?
+  phone        String?
+  // Add other fields as needed
+  product      Product[]
+}
